@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>CRUD de Usuários - Neo4j</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    input, button {
+      padding: 8px;
+      margin: 5px;
+    }
+
+    #usuarios {
+      margin-top: 20px;
+    }
+
+    .usuario {
+      border-bottom: 1px solid #ccc;
+      padding: 8px 0;
+    }
+
+    .message {
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid;
+      border-radius: 5px;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+
+    .success {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+    }
+  </style>
+</head>
+<body>
+  <h1>Usuários</h1>
+
+  <h3>Criar usuário</h3>
+  <input type="text" id="nome" placeholder="Nome" />
+  <input type="email" id="email" placeholder="Email" />
+  <button onclick="criarUsuario()">Criar</button>
+
+  <h3>Atualizar nome</h3>
+  <input type="email" id="emailAtualizar" placeholder="Email do usuário" />
+  <input type="text" id="novoNome" placeholder="Novo nome" />
+  <button onclick="atualizarUsuario()">Atualizar</button>
+
+  <h3>Excluir usuário</h3>
+  <input type="email" id="emailDeletar" placeholder="Email do usuário" />
+  <button onclick="deletarUsuario()">Deletar</button>
+
+  <h3>Lista de usuários</h3>
+  <button onclick="listarUsuarios()">Recarregar lista</button>
+  <div id="usuarios"></div>
+
+  <div id="message" class="message" style="display: none;"></div>
+
+  <script>
+    const api = 'http://localhost:3000/usuarios';
+
+    function clearInputs() {
+      document.getElementById('nome').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('emailAtualizar').value = '';
+      document.getElementById('novoNome').value = '';
+      document.getElementById('emailDeletar').value = '';
+    }
+
+    function showMessage(message, type) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.style.display = 'block';
+      messageDiv.textContent = message;
+      messageDiv.className = `message ${type}`;
+    }
+
+    function criarUsuario() {
+      const nome = document.getElementById('nome').value;
+      const email = document.getElementById('email').value;
+
+      if (!nome || !email) {
+        return showMessage('Nome e Email são obrigatórios.', 'error');
+      }
+
+      fetch(api, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email })
+      })
+      .then(() => {
+        listarUsuarios();
+        clearInputs();
+        showMessage('Usuário criado com sucesso!', 'success');
+      })
+      .catch(err => {
+        console.error(err);
+        showMessage('Erro ao criar usuário: ' + err, 'error');
+      });
+    }
+
+    function listarUsuarios() {
+      fetch(api)
+        .then(res => res.json())
+        .then(data => {
+          // Verificando se a resposta é um array
+          if (Array.isArray(data)) {
+            const lista = document.getElementById('usuarios');
+            lista.innerHTML = '';
+            data.forEach(u => {
+              lista.innerHTML += `<div class="usuario"><strong>${u.nome}</strong> - ${u.email}</div>`;
+            });
+          } else {
+            showMessage('Dados recebidos estão em formato inesperado.', 'error');
+          }
+        })
+        .catch(err => showMessage('Erro ao listar: ' + err, 'error'));
+    }
+
+    function atualizarUsuario() {
+      const email = document.getElementById('emailAtualizar').value;
+      const nome = document.getElementById('novoNome').value;
+
+      if (!email || !nome) {
+        return showMessage('Email e Novo Nome são obrigatórios.', 'error');
+      }
+
+      fetch(`${api}/${encodeURIComponent(email)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome })
+      })
+      .then(() => {
+        listarUsuarios();
+        clearInputs();
+        showMessage('Usuário atualizado com sucesso!', 'success');
+      })
+      .catch(err => showMessage('Erro ao atualizar: ' + err, 'error'));
+    }
+
+    function deletarUsuario() {
+      const email = document.getElementById('emailDeletar').value;
+
+      if (!email) {
+        return showMessage('Email é obrigatório para deletar.', 'error');
+      }
+
+      fetch(`${api}/${encodeURIComponent(email)}`, {
+        method: 'DELETE'
+      })
+      .then(() => {
+        listarUsuarios();
+        clearInputs();
+        showMessage('Usuário deletado com sucesso!', 'success');
+      })
+      .catch(err => showMessage('Erro ao deletar: ' + err, 'error'));
+    }
+
+    listarUsuarios(); // Carrega a lista ao abrir a página
+  </script>
+</body>
+</html>
