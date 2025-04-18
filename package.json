@@ -1,0 +1,17 @@
+{
+  "name": "trabalho",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "neo4j-driver": "^5.28.1"
+  },
+  "description": ""
+}
