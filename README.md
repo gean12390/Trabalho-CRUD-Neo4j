@@ -1,5 +1,9 @@
 # Trabalho-CRUD-NEO4J
-***
+  ***
+  <strong>Materia</strong> : Banco de Dados Não Relacional I  
+  
+  <strong>Professor</strong> : Renato Carioca Duarte
+  ***
 
 <strong>Desenvolvedores:</strong>  
 
