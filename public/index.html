@@ -4,67 +4,143 @@
   <meta charset="UTF-8" />
   <title>CRUD de Usuários - Neo4j</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f0f0; /* CINZA CLARO */
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+  }
 
-    input, button {
-      padding: 8px;
-      margin: 5px;
-    }
+  .container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
 
-    #usuarios {
-      margin-top: 20px;
-    }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #222;
+  }
 
-    .usuario {
-      border-bottom: 1px solid #ccc;
-      padding: 8px 0;
-    }
+  h3 {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #444;
+  }
 
-    .message {
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid;
-      border-radius: 5px;
-    }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
 
-    .error {
-      background-color: #f8d7da;
-      border-color: #f5c6cb;
-      color: #721c24;
-    }
+  input, button {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
 
-    .success {
-      background-color: #d4edda;
-      border-color: #c3e6cb;
-      color: #155724;
-    }
-  </style>
+  input {
+    background: #f9f9f9;
+    color: #333;
+  }
+
+  button {
+    background: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  button:hover {
+    background: #0056b3;
+  }
+
+  #usuarios {
+    margin-top: 20px;
+  }
+
+  .usuario {
+    background: #f7f7f7;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .message {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+
 </head>
 <body>
-  <h1>Usuários</h1>
+  <div class="container">
+    <h1>Gerenciador de Usuários</h1>
 
-  <h3>Criar usuário</h3>
-  <input type="text" id="nome" placeholder="Nome" />
-  <input type="email" id="email" placeholder="Email" />
-  <button onclick="criarUsuario()">Criar</button>
+    <h3>Criar usuário</h3>
+    <div class="form-group">
+      <input type="text" id="nome" placeholder="Nome" />
+      <input type="email" id="email" placeholder="Email" />
+      <button onclick="criarUsuario()">Criar</button>
+    </div>
 
-  <h3>Atualizar nome</h3>
-  <input type="email" id="emailAtualizar" placeholder="Email do usuário" />
-  <input type="text" id="novoNome" placeholder="Novo nome" />
-  <button onclick="atualizarUsuario()">Atualizar</button>
+    <h3>Atualizar nome</h3>
+    <div class="form-group">
+      <input type="email" id="emailAtualizar" placeholder="Email do usuário" />
+      <input type="text" id="novoNome" placeholder="Novo nome" />
+      <button onclick="atualizarUsuario()">Atualizar</button>
+    </div>
 
-  <h3>Excluir usuário</h3>
-  <input type="email" id="emailDeletar" placeholder="Email do usuário" />
-  <button onclick="deletarUsuario()">Deletar</button>
+    <h3>Excluir usuário</h3>
+    <div class="form-group">
+      <input type="email" id="emailDeletar" placeholder="Email do usuário" />
+      <button onclick="deletarUsuario()">Deletar</button>
+    </div>
 
-  <h3>Lista de usuários</h3>
-  <button onclick="listarUsuarios()">Recarregar lista</button>
-  <div id="usuarios"></div>
+    <h3>Lista de usuários</h3>
+    <button onclick="listarUsuarios()">🔄 Recarregar lista</button>
+    <div id="usuarios"></div>
 
-  <div id="message" class="message" style="display: none;"></div>
+    <div id="message" class="message" style="display: none;"></div>
+  </div>
 
   <script>
     const api = 'http://localhost:3000/usuarios';
@@ -112,7 +188,6 @@
       fetch(api)
         .then(res => res.json())
         .then(data => {
-          // Verificando se a resposta é um array
           if (Array.isArray(data)) {
             const lista = document.getElementById('usuarios');
             lista.innerHTML = '';
